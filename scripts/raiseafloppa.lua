@@ -15,6 +15,7 @@ local globalVariables = {
 		AutoFeed = false,
 		AutoFeedBaby = false,
 		AutoFillMilk = false,
+		AutoBake = false,
 	},
 	localPlayer = game:GetService("Players").LocalPlayer,
 	NormalBowl = workspace:FindFirstChild("Bowl") or workspace:WaitForChild("Bowl"),
@@ -134,6 +135,50 @@ task.spawn(function()
 			fireproximityprompt(milkdish:FindFirstChild("Part"):FindFirstChildOfClass("ProximityPrompt"))
 			task.wait(1)
 			globalVariables.localPlayer.Character:FindFirstChild("Humanoid").RootPart.CFrame = oldcframe
+		end
+	end)
+end)
+
+mainsection:NewToggle("Auto-Bake Grilled Cheese", "Automatically bakes a grilled cheese for Floppa at 40% happiness", function(state)
+	globalVariables.Booleans.AutoBake = state
+end)
+local ingredientlist = {"Cheese","Bread"}
+task.spawn(function()
+	local config = floppa:FindFirstChild("Configuration")
+	config.Mood:GetPropertyChangedSignal("Value"):Connect(function()
+		if config.Mood.Value == 40 then
+			if globalVariables.localPlayer:FindFirstChild("leaderstats2"):FindFirstChild("Money").Value < 50 then
+				repeat
+					task.wait(1)
+				until globalVariables.localPlayer:FindFirstChild("leaderstats2"):FindFirstChild("Money").Value >= 50
+			end
+			for index, ingredient in next, ingredientlist do
+				globalVariables.Services.ReplicatedStorage:FindFirstChild("Purchase"):FireServer(ingredient)
+				task.wait(.1)
+			end
+			globalVariables.localPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-50.0427628, 7.79999876, -58.5432205, 0.999931335, -7.50637525e-08, -0.0117209712, 7.42801092e-08, 1, -6.72935698e-08, 0.0117209712, 6.64183162e-08, 0.999931335)
+			-- holy that number is big
+			
+			local char = globalVariables.localPlayer.Character
+			for index, ingredient in next, ingredientlist do
+				char:FindFirstChild("Humanoid"):UnequipTools()
+				char:FindFirstChild("Humanoid"):EquipTool(globalVariables.localPlayer.Backpack:FindFirstChild(ingredient))
+				fireproximityprompt(workspace:FindFirstChild("Stove").PrimaryPart:FindFirstChildOfClass("ProximityPrompt"))
+				task.wait(.2)
+			end
+			fireproximityprompt(workspace:FindFirstChild("Stove").PrimaryPart:FindFirstChildOfClass("ProximityPrompt"))
+			task.wait(.25)
+			local ui = globalVariables.localPlayer:FindFirstChild("PlayerGui"):FindFirstChild("StoveUI")
+			firesignal(ui.Frame.Temperature3.MouseButton1Click)
+			task.wait(.2)
+			firesignal(ui.Frame.CookButton.MouseButton1Click)
+			repeat
+				task.wait(1)
+			until workspace:FindFirstChild("Grilled Cheese")
+			char:FindFirstChild("HumanoidRootPart").CFrame = workspace:FindFirstChild("Grilled Cheese").Handle.CFrame
+			task.wait(.2)
+			char:FindFirstChild("HumanoidRootPart").CFrame = floppa:FindFirstChild("Head").CFrame
+			fireproximityprompt(floppa:FindFirstChild("HumanoidRootPart").FeedPrompt)
 		end
 	end)
 end)
