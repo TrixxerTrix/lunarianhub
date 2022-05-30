@@ -14,6 +14,7 @@ local globalVariables = {
 		AutoCollect = false,
 		AutoFeed = false,
 		AutoFeedBaby = false,
+		AutoFillMilk = false,
 	},
 	localPlayer = game:GetService("Players").LocalPlayer,
 	NormalBowl = workspace:FindFirstChild("Bowl") or workspace:WaitForChild("Bowl"),
@@ -110,5 +111,29 @@ task.spawn(function()
 end)
 
 mainsection:NewToggle("Auto-Fill Milk Dish", "Automatically fills the milk dish when it's empty.", function(state)
-	
+	globalVariables.Booleans.AutoFillMilk = state
+end)
+task.spawn(function()
+	if not workspace:FindFirstChild("Milk Dish") then
+		repeat
+			task.wait(1)
+		until workspace:FindFirstChild("Milk Dish")
+	end
+	local milkdish = workspace:FindFirstChild("Milk Dish")
+	milkdish:FindFirstChild("Part"):GetPropertyChangedSignal("Transparency"):Connect(function()
+		if milkdish:FindFirstChild("Part").Transparency == 1 and globalVariables.Booleans.AutoFillMilk then
+			if globalVariables.localPlayer:FindFirstChild("leaderstats2"):FindFirstChild("Money").Value < 25 then
+				repeat
+					task.wait(1)
+				until globalVariables.localPlayer:FindFirstChild("leaderstats2"):FindFirstChild("Money").Value >= 25
+			end
+			globalVariables.Services.ReplicatedStorage:FindFirstChild("Purchase"):FireServer("Milk")
+			local oldcframe = globalVariables.localPlayer.Character:FindFirstChild("Humanoid").RootPart.CFrame
+			globalVariables.localPlayer.Character:FindFirstChild("Humanoid").RootPart.CFrame = milkdish:FindFirstChild("Part").CFrame * CFrame.new(0,5,0)
+			task.wait(1)
+			fireproximityprompt(milkdish:FindFirstChild("Part"):FindFirstChildOfClass("ProximityPrompt"))
+			task.wait(1)
+			globalVariables.localPlayer.Character:FindFirstChild("Humanoid").RootPart.CFrame = oldcframe
+		end
+	end)
 end)
