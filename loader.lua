@@ -1,4 +1,4 @@
-local templateurl = "https://raw.githubusercontent.com/TrixxerTrix/lunarianhub/games/%s"
+local templateurl = "https://raw.githubusercontent.com/TrixxerTrix/lunarianhub/games/%s.lua"
 local gameids = {
   [9203864304] = "raiseafloppa"
 }
