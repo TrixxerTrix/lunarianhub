@@ -67,11 +67,6 @@ mainsection:NewToggle("Auto-Feed", "Automatically fills bowl when bowl is empty.
 end)
 globalVariables.NormalBowl:FindFirstChild("Part"):GetPropertyChangedSignal("Transparency"):Connect(function()
 	if globalVariables.NormalBowl:FindFirstChild("Part").Transparency == 1 and globalVariables.Booleans.AutoFeed then
-		if globalVariables.localPlayer:FindFirstChild("leaderstats2"):FindFirstChild("Money").Value < 50 then
-			repeat
-				task.wait(1)
-			until globalVariables.localPlayer:FindFirstChild("leaderstats2"):FindFirstChild("Money").Value >= 50
-		end
 		globalVariables.Services.ReplicatedStorage:FindFirstChild("Purchase"):FireServer("Floppa Food")
 		local oldcframe = globalVariables.localPlayer.Character:FindFirstChild("Humanoid").RootPart.CFrame
 		globalVariables.localPlayer.Character:FindFirstChild("Humanoid").RootPart.CFrame = globalVariables.NormalBowl:FindFirstChild("Part").CFrame * CFrame.new(0,5,0)
@@ -94,11 +89,6 @@ task.spawn(function()
 	local babybowl = workspace:FindFirstChild("Baby Bowl")
 	babybowl:FindFirstChild("Part"):GetPropertyChangedSignal("Transparency"):Connect(function()
 		if babybowl:FindFirstChild("Part").Transparency == 1 and globalVariables.Booleans.AutoFeedBaby then
-			if globalVariables.localPlayer:FindFirstChild("leaderstats2"):FindFirstChild("Money").Value < 50 then
-				repeat
-					task.wait(1)
-				until globalVariables.localPlayer:FindFirstChild("leaderstats2"):FindFirstChild("Money").Value >= 50
-			end
 			globalVariables.Services.ReplicatedStorage:FindFirstChild("Purchase"):FireServer("Floppa Food")
 			local oldcframe = globalVariables.localPlayer.Character:FindFirstChild("Humanoid").RootPart.CFrame
 			globalVariables.localPlayer.Character:FindFirstChild("Humanoid").RootPart.CFrame = babybowl:FindFirstChild("Part").CFrame * CFrame.new(0,5,0)
@@ -122,11 +112,6 @@ task.spawn(function()
 	local milkdish = workspace:FindFirstChild("Milk Dish")
 	milkdish:FindFirstChild("Part"):GetPropertyChangedSignal("Transparency"):Connect(function()
 		if milkdish:FindFirstChild("Part").Transparency == 1 and globalVariables.Booleans.AutoFillMilk then
-			if globalVariables.localPlayer:FindFirstChild("leaderstats2"):FindFirstChild("Money").Value < 25 then
-				repeat
-					task.wait(1)
-				until globalVariables.localPlayer:FindFirstChild("leaderstats2"):FindFirstChild("Money").Value >= 25
-			end
 			globalVariables.Services.ReplicatedStorage:FindFirstChild("Purchase"):FireServer("Milk")
 			local oldcframe = globalVariables.localPlayer.Character:FindFirstChild("Humanoid").RootPart.CFrame
 			globalVariables.localPlayer.Character:FindFirstChild("Humanoid").RootPart.CFrame = milkdish:FindFirstChild("Part").CFrame * CFrame.new(0,5,0)
@@ -134,6 +119,16 @@ task.spawn(function()
 			fireproximityprompt(milkdish:FindFirstChild("Part"):FindFirstChildOfClass("ProximityPrompt"))
 			task.wait(1)
 			globalVariables.localPlayer.Character:FindFirstChild("Humanoid").RootPart.CFrame = oldcframe
+		end
+	end)
+end)
+
+mainsection:NewButton("Pick up mushrooms","",function(state)
+	for index, object in next, workspace:GetDescendants() do
+		if object.Name == "Mushroom" and object:IsA("MeshPart") and object.Transparency == 0 then
+			globalVariables.localPlayer.Character:FindFirstChild("Humanoid").RootPart.CFrame = object.CFrame * CFrame.new(0,5,0)
+			fireproximityprompt(object.ForagePrompt)
+			task.wait(.5)
 		end
 	end)
 end)
